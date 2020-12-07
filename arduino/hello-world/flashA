@@ -1,0 +1,37 @@
+#!/bin/bash -u
+
+function goToDir()
+{
+	cd Development/C/arduino/hello-world/
+}
+
+function crossCompile()
+{
+	avr-gcc -c -Wall -Os -mmcu=atmega328p -DF_CPU=16000000UL hello-world.c -o hello-world.o
+}
+
+function makeElf()
+{
+	avr-gcc -Wall -Os -mmcu=atmega328p -DF_CPU=16000000UL hello-world.o -o hello-world.elf
+}
+
+function makeHex()
+{
+	avr-objcopy -j .text -j .data -O ihex hello-world.elf hello-world.hex
+}
+
+function upload()
+{
+	avrdude -v -patmega328p -carduino -b115200 -D -Uflash:w:hello-world.hex:i
+}
+
+function flashA()
+{
+	goToDir
+	crossCompile
+	makeElf
+	makeHex
+	upload
+}
+
+flashA
